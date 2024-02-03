@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 
@@ -9,25 +10,27 @@ import (
 )
 
 
-type LoadBalancer struct{}
+type LoadBalancer struct {
+    pb.UnimplementedLoadBalancerServer
+}
 
-func (l *LoadBalancer) NewServer(req *pb.ServerRequest, res *pb.ServerResponse) error {
+func (l *LoadBalancer) NewServer(ctx context.Context, req *pb.ServerRequest) (*pb.ServerResponse, error) {
     fmt.Println("Received newServer request from IP:", req.Ip)
-    res.ServerId = "1234"
-    return nil
+    return &pb.ServerResponse{ServerId: "1234"}, nil
 }
 
-func (l *LoadBalancer) HeartBeat(req *pb.ServerRequest, res *pb.ServerResponse) error {
-    fmt.Println("Received heartBeat request from IP:", req.Ip)
-    res.ServerId = "ok"
-    return nil
+
+func (l *LoadBalancer) HeartBeat(ctx context.Context, req *pb.Heartreq) (*pb.ServerResponse, error) {
+    fmt.Println("Received heartBeat request from IP:", req.Status)
+    return &pb.ServerResponse{ServerId: "ok"}, nil
 }
 
-func (l *LoadBalancer) Notify(req *pb.NotifyRequest, res *pb.ServerResponse) error {
+
+func (l *LoadBalancer) Notify(ctx context.Context, req *pb.NotifyRequest) (*pb.ServerResponse, error) {
     fmt.Printf("Received notify request for GameID: %s, ServerIP: %s\n", req.GameId, req.ServerIp)
-    res.ServerId = "ok"
-    return nil
+    return &pb.ServerResponse{ServerId: "ok"}, nil
 }
+
 
 func startRPCServer() {
     listener, err := net.Listen("tcp", ":1234")
