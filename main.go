@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net"
 
-	pb "github.com/hayk2377/Grpc-go/protobuf/phew"
+	pb "github.com/hayk2377/Grpc-go/phew"
 	"google.golang.org/grpc"
 )
+
 
 type LoadBalancer struct{}
 
